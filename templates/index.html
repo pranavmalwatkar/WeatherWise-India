@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Climate & Weather Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+  <main class="container">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">WEATHER INTELLIGENCE</p>
+        <h1>Climate & Weather</h1>
+        <p class="subtitle">Current conditions and a 5-day outlook for your city.</p>
+      </div>
+      <div class="globe" aria-hidden="true">🌍</div>
+    </header>
+
+    <form class="search" method="POST">
+      <label class="sr-only" for="city">Enter city</label>
+      <input id="city" name="city" value="{{ searched_city }}" list="indian-cities" placeholder="Search an Indian city"
+        required>
+      <datalist id="indian-cities">
+        <option value="Pune">
+        <option value="Mumbai">
+        <option value="Nanded">
+        <option value="Nagpur">
+        <option value="Nashik">
+        <option value="Delhi">
+        <option value="Hyderabad">
+        <option value="Bengaluru">
+        <option value="Chennai">
+        <option value="Kolkata">
+        <option value="Ahmedabad">
+        <option value="Jaipur">
+        <option value="Lucknow">
+        <option value="Indore">
+        <option value="Bhopal">
+        <option value="Thane">
+        <option value="Patna">
+        <option value="Surat">
+        <option value="Visakhapatnam">
+      </datalist>
+      <button type="submit">Get weather <span aria-hidden="true">→</span></button>
+    </form>
+
+    {% if error %}
+    <section class="error" role="alert">
+      <strong>Unable to load weather</strong>
+      <p>{{ error }}</p>
+    </section>
+    {% endif %}
+
+    {% if weather %}
+    <section class="hero-card">
+      <div class="current-main">
+        <div>
+          <p class="eyebrow light">CURRENT WEATHER</p>
+          <h2>{{ weather.city }}{% if weather.country %}, {{ weather.country }}{% endif %}</h2>
+          <p class="condition">{{ weather.description }}</p>
+          <p class="updated">Updated {{ weather.updated }}</p>
+        </div>
+        <div class="temperature">
+          <img src="https://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="{{ weather.description }}">
+          <span>{{ weather.temp }}°<small>C</small></span>
+        </div>
+      </div>
+      <div class="feels">Feels like {{ weather.feels_like }}°C</div>
+    </section>
+
+    <section class="metrics" aria-label="Weather details">
+      <article class="metric"><span class="metric-icon">💧</span>
+        <p>Humidity</p><strong>{{ weather.humidity }}<small>%</small></strong>
+      </article>
+      <article class="metric"><span class="metric-icon">💨</span>
+        <p>Wind speed</p><strong>{{ weather.wind }}<small> km/h</small></strong>
+      </article>
+      <article class="metric"><span class="metric-icon">🌡️</span>
+        <p>Pressure</p><strong>{{ weather.pressure }}<small> hPa</small></strong>
+      </article>
+      <article class="metric"><span class="metric-icon">👁️</span>
+        <p>Visibility</p><strong>{{ weather.visibility }}<small> km</small></strong>
+      </article>
+      <article class="metric"><span class="metric-icon">🌅</span>
+        <p>Sunrise</p><strong class="time">{{ weather.sunrise }}</strong>
+      </article>
+      <article class="metric"><span class="metric-icon">🌇</span>
+        <p>Sunset</p><strong class="time">{{ weather.sunset }}</strong>
+      </article>
+    </section>
+
+    <section class="forecast-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">PLAN AHEAD</p>
+          <h2>5-day forecast</h2>
+        </div>
+        <span class="pill">Temperature in °C</span>
+      </div>
+      {% if weather.forecast %}
+      <div class="forecast-grid">
+        {% for day in weather.forecast %}
+        <article class="forecast-card">
+          <p class="forecast-day">{{ day.day }}</p>
+          <img src="https://openweathermap.org/img/wn/{{ day.icon }}@2x.png" alt="{{ day.description }}">
+          <strong class="forecast-temp">{{ day.temp }}°C</strong>
+          <p class="forecast-description">{{ day.description }}</p>
+          <div class="mini-details"><span>💧 {{ day.humidity }}%</span><span>💨 {{ day.wind }} km/h</span></div>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="empty">No forecast data was returned for this city.</p>
+      {% endif %}
+    </section>
+    {% else %}
+    <section class="welcome">
+      <div class="welcome-icon">⛅</div>
+      <h2>Your weather dashboard</h2>
+      <p>Enter a city above to view live weather conditions, humidity, wind, sunrise, sunset and the forecast.</p>
+    </section>
+    {% endif %}
+
+    <footer>
+      <p>Weather data provided by <a href="https://openweathermap.org/" target="_blank"
+          rel="noreferrer">OpenWeatherMap</a>.</p>
+      <p>Note: This app displays current weather and short-term forecasts. It does not calculate long-term climate
+        trends.</p>
+    </footer>
+  </main>
+</body>
+
+</html>
